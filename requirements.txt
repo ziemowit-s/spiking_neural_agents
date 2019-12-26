@@ -1,1 +1,6 @@
 brian2
+brian2tools
+matplotlib
+numpy
+scipy
+cython

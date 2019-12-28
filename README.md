@@ -39,3 +39,15 @@ plt.xlabel('t (ms)')
 plt.ylabel('v (mV)')
 plt.show()
 ```
+
+# Install
+
+* Local:
+```bash
+python setup.py bdist_wheel
+```
+
+* From GitHub
+```bash
+pip install https://github.com/ziemowit-s/spiking_neural_agents
+```

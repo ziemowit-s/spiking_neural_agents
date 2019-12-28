@@ -7,6 +7,9 @@ tensorboard/
 *.csv
 *.xml
 *.pickle
+dist/
+spiking_neural_agents.egg-info/
+*.egg-info/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

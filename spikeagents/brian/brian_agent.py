@@ -23,11 +23,26 @@ class BrianAgent(Agent, Network):
         self.neuron_model = neuron_model
         self.synapse_model = synapse_model
 
+        self.neuron_layers = []
+        self.synalse_layers = []
+
     def build(self):
         start_scope()
         self._make_layers()
         self._make_synapses()
         self.store()
+
+    def add_neuron_layer(self, **kwargs):
+        n = NeuronGroup(**kwargs)
+        self.add(n)
+        self.neuron_layers.append(n)
+        return n
+
+    def add_synapse_layer(self, **kwargs):
+        s = Synapses(**kwargs)
+        self.add(s)
+        self.synalse_layers.append(s)
+        return s
 
     @abc.abstractmethod
     def _make_layers(self):

@@ -14,23 +14,20 @@ class BrianLIFAgent(BrianAgent):
         self.output_size = output_size
 
     def _make_layers(self):
-        self.inp = NeuronGroup(self.input_size, model=self.neuron_model.model, method='linear',
-                               threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
-        self.output = NeuronGroup(self.output_size, model=self.neuron_model.model, method='linear',
-                                  threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
-        self.add(self.inp)
-        self.add(self.output)
+        self.inp = self.add_neuron_layer(N=self.input_size, model=self.neuron_model.model, method='linear',
+                                         threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
+        self.output = self.add_neuron_layer(N=self.output_size, model=self.neuron_model.model, method='linear',
+                                            threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
 
     def _make_synapses(self):
-        input_output = Synapses(self.inp, self.output,
-                                model=self.synapse_model.model,
-                                on_pre=self.synapse_model.on_pre,
-                                on_post=self.synapse_model.on_post,
-                                delay=1 * ms,
-                                namespace=self.namespace)
-        input_output.connect(p=1.0)
-        input_output.w = 'gmax'
-        self.add(input_output)
+        s = self.add_synapse_layer(source=self.inp, target=self.output,
+                                   model=self.synapse_model.model,
+                                   on_pre=self.synapse_model.on_pre,
+                                   on_post=self.synapse_model.on_post,
+                                   delay=1 * ms,
+                                   namespace=self.namespace)
+        s.connect(p=1.0)
+        s.w = 'gmax'
 
 
 if __name__ == '__main__':
@@ -61,7 +58,7 @@ if __name__ == '__main__':
     # Main loop
     for i in range(1000):
         observ = np.ones(INPUT_SIZE) * 100 * mV
-        nn.step(duration=50 * ms, observation=observ)
+        nn.step(duration=5 * ms, observation=observ)
 
         plot_states(state_in, "input states", ax=axs[1])
         plot_states(state_out, "outputs states", ax=axs[2])

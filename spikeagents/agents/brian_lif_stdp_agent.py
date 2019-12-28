@@ -8,21 +8,17 @@ from brian2 import *
 
 class BrianLIFAgent(BrianAgent):
 
-    def __init__(self, neuron_model, synapse_model, input_size, hidden_size, output_size, namespace: dict = None):
-        namespace.update(neuron_model.namespace)
-        namespace.update(synapse_model.namespace)
+    def __init__(self, neuron_model, synapse_model, input_size, output_size, namespace: dict = None):
         BrianAgent.__init__(self, neuron_model=neuron_model, synapse_model=synapse_model, namespace=namespace)
-
         self.input_size = input_size
-        self.hidden_size = hidden_size
         self.output_size = output_size
 
     def _make_layers(self):
-        self.inp = NeuronGroup(self.input_size, model=self.neuron_model.model, method='euler',
-                               threshold='v>v_threshold', reset='v = v_rest', refractory=10 * ms, namespace=self.namespace)
+        self.inp = NeuronGroup(self.input_size, model=self.neuron_model.model, method='linear',
+                               threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
+        self.output = NeuronGroup(self.output_size, model=self.neuron_model.model, method='linear',
+                                  threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
         self.add(self.inp)
-        self.output = NeuronGroup(self.output_size, model=self.neuron_model.model, method='euler',
-                                  threshold='v>v_threshold', reset='v = v_rest', refractory=10 * ms, namespace=self.namespace)
         self.add(self.output)
 
     def _make_synapses(self):
@@ -30,15 +26,25 @@ class BrianLIFAgent(BrianAgent):
                                 model=self.synapse_model.model,
                                 on_pre=self.synapse_model.on_pre,
                                 on_post=self.synapse_model.on_post,
-                                delay=1 * ms, namespace=self.namespace)
+                                delay=1 * ms,
+                                namespace=self.namespace)
         input_output.connect(p=1.0)
-        input_output.w = 'rand() * gmax'
+        input_output.w = 'gmax'
         self.add(input_output)
 
 
 if __name__ == '__main__':
-    nn = BrianLIFAgent(neuron_model=GatedNeuron(), synapse_model=STDPSynapse(),
-                       input_size=10, hidden_size=10, output_size=2, namespace={'tau': 10 * ms})
+    INPUT_SIZE = 1
+    OUTPUT_SIZE = 1
+
+    neuron_model = GatedNeuron()
+    syn_model = STDPSynapse()
+    syn_model.gmax = 1.315
+
+    nn = BrianLIFAgent(neuron_model=neuron_model,
+                       synapse_model=syn_model,
+                       input_size=INPUT_SIZE,
+                       output_size=OUTPUT_SIZE)
     nn.build()
     state_in = StateMonitor(nn.inp, variables='v', record=True)
     nn.add(state_in)
@@ -55,16 +61,18 @@ if __name__ == '__main__':
 
     # Main loop
     for i in range(1000):
-        nn.step(duration=50 * ms, observation=np.random.random_sample(10))
+        observ = np.ones(INPUT_SIZE) * 100 * mV
+        nn.step(duration=50 * ms, observation=observ)
 
         fig_in = plot_states(state_in, "input states", fig=fig_in)
         fig_out = plot_states(state_out, "outputs states", fig=fig_out)
         moves = handler.pop()
 
-        nn.remove(state_in)
-        nn.remove(state_out)
+        if i % 5 == 0:
+            nn.remove(state_in)
+            nn.remove(state_out)
 
-        state_in = StateMonitor(nn.inp, variables='v', record=True)
-        nn.add(state_in)
-        state_out = StateMonitor(nn.output, variables='v', record=True)
-        nn.add(state_out)
+            state_in = StateMonitor(nn.inp, variables='v', record=True)
+            nn.add(state_in)
+            state_out = StateMonitor(nn.output, variables='v', record=True)
+            nn.add(state_out)

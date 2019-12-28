@@ -17,6 +17,8 @@ class BrianAgent(Agent, Network):
         if namespace is None:
             namespace = {}
         self.namespace = namespace
+        self.namespace.update(neuron_model.namespace)
+        self.namespace.update(synapse_model.namespace)
 
         self.neuron_model = neuron_model
         self.synapse_model = synapse_model
@@ -46,7 +48,7 @@ class BrianAgent(Agent, Network):
 
     def step(self, duration=1*ms, observation=None, reward=None, namespace=None):
         if observation is not None:
-            self.inp[:].v += observation * 100.0 * mV
+            self.inp[:].v += observation
 
         self._run_agent(duration, namespace=namespace)
 

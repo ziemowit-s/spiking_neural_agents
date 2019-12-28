@@ -6,6 +6,9 @@ RAND_GMAX_WEIGHT = 'rand() * gmax'
 
 
 class Synapse:
+    def __init__(self):
+        pass
+
     @property
     @abc.abstractmethod
     def namespace(self) -> dict:
@@ -33,27 +36,30 @@ class STDPSynapse(Synapse):
 
     ge need to be use as a gated variable on neural group side. See: GatedNeuron in neuron_utils.py
     """
+
+    def __init__(self):
+        super().__init__()
+        self.gmax = .01
+
+        self.taupre = 20 * ms
+        self.taupost = self.taupre
+
+        self.dApre = .01
+        self.dApost = -self.dApre * self.taupre / self.taupost * 1.05
+
+        self.dApost *= self.gmax
+        self.dApre *= self.gmax
+
     @property
     def namespace(self) -> dict:
-        gmax = .01
-
-        taupre = 20 * ms
-        taupost = taupre
-
-        dApre = .01
-        dApost = -dApre * taupre / taupost * 1.05
-
-        dApost *= gmax
-        dApre *= gmax
-
         return {
-            'gmax': gmax,
+            'gmax': self.gmax,
 
-            'taupre': taupre,
-            'taupost': taupre,
+            'taupre': self.taupre,
+            'taupost': self.taupre,
 
-            'dApre': dApre,
-            'dApost': dApost,
+            'dApre': self.dApre,
+            'dApost': self.dApost,
         }
 
     @property

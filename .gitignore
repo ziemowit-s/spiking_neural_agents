@@ -8,6 +8,7 @@ tensorboard/
 *.xml
 *.pickle
 dist/
+build/
 spiking_neural_agents.egg-info/
 *.egg-info/
 

@@ -1,4 +1,4 @@
-from brian.handlers import BrianEventHandler
+from brian.handlers.brian_event_handler import BrianEventHandler
 from brian.utils import plot_spikes
 
 

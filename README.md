@@ -15,7 +15,7 @@ brian2.test()
 ## NEURON
 
 ```python
-from neuron import h, gui
+from spikeagents.neuron import h, gui
 import matplotlib.pyplot as plt
 
 soma = h.Section(name='soma')

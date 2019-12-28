@@ -7,10 +7,12 @@ class SpikeEventHandler(BrianEventHandler):
 
     def exec(self, *args, **kwargs):
         spike_monitor = kwargs['spike_monitor']
-        print('spike!')
-        if 'fig' in self.__dict__:
-            self.fig = plot_spikes(spike_monitor, "output spikes", fig=self.fig)
+        spike_number = list(spike_monitor.count)[0]
+        print('spike:', spike_number)
         self.output = spike_monitor.i
+
+        if 'ax' in self.__dict__:
+            plot_spikes(spike_monitor, "output spikes", ax=self.ax)
 
     def pop(self):
         result = self.output

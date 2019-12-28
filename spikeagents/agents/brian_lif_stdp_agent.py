@@ -34,7 +34,7 @@ class BrianLIFAgent(BrianAgent):
 
 
 if __name__ == '__main__':
-    INPUT_SIZE = 1
+    INPUT_SIZE = 13
     OUTPUT_SIZE = 1
 
     neuron_model = GatedNeuron()
@@ -51,11 +51,10 @@ if __name__ == '__main__':
     state_out = StateMonitor(nn.output, variables='v', record=True)
     nn.add(state_out)
 
-    fig_in = None
-    fig_out = None
-
-    handler = SpikeEventHandler(output=[])
-    nn.add_spike_handler(nn.output, handler=handler)
+    fig, axs = plt.subplots(3, clear=True)
+    fig.show()
+    handler = SpikeEventHandler(ax=axs[0], output=[])
+    nn.add_spike_handler(layer=nn.output, handler=handler)
 
     nn.init_network(duration=10 * ms)
 
@@ -64,15 +63,7 @@ if __name__ == '__main__':
         observ = np.ones(INPUT_SIZE) * 100 * mV
         nn.step(duration=50 * ms, observation=observ)
 
-        fig_in = plot_states(state_in, "input states", fig=fig_in)
-        fig_out = plot_states(state_out, "outputs states", fig=fig_out)
+        plot_states(state_in, "input states", ax=axs[1])
+        plot_states(state_out, "outputs states", ax=axs[2])
         moves = handler.pop()
-
-        if i % 5 == 0:
-            nn.remove(state_in)
-            nn.remove(state_out)
-
-            state_in = StateMonitor(nn.inp, variables='v', record=True)
-            nn.add(state_in)
-            state_out = StateMonitor(nn.output, variables='v', record=True)
-            nn.add(state_out)
+        plt.pause(0.1)

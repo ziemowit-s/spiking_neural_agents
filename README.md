@@ -1,7 +1,17 @@
 # Prerequisites
-
-* Install requirements.txt
 * Install NEURON from the instruction: https://github.com/ziemowit-s/neuron_netpyne_get_started
+
+# Install
+
+* Local:
+```bash
+python setup.py bdist_wheel
+```
+
+* From GitHub
+```bash
+pip install git+https://github.com/ziemowit-s/spiking_neural_agents.git
+```
 
 # Test
 
@@ -38,16 +48,4 @@ plt.plot(t, v)
 plt.xlabel('t (ms)')
 plt.ylabel('v (mV)')
 plt.show()
-```
-
-# Install
-
-* Local:
-```bash
-python setup.py bdist_wheel
-```
-
-* From GitHub
-```bash
-pip install git+https://github.com/ziemowit-s/spiking_neural_agents.git
 ```

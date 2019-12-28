@@ -2,7 +2,8 @@ import abc
 
 from spikeagents.brian.handlers.brian_event_handler import BrianEventHandler
 from brian2 import *
-from core.agent import Agent
+
+from spikeagents.core.agent import Agent
 
 
 class BrianAgent(Agent, Network):

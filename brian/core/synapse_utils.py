@@ -8,6 +8,11 @@ RAND_GMAX_WEIGHT = 'rand() * gmax'
 class Synapse:
     @property
     @abc.abstractmethod
+    def namespace(self) -> dict:
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
     def on_pre(self):
         raise NotImplementedError()
 
@@ -23,7 +28,13 @@ class Synapse:
 
 
 class STDPSynapse(Synapse):
-    def __init__(self):
+    """
+    Spike-timing dependent plasticity Adapted from Song, Miller and Abbott (2000) and Song and Abbott (2001)
+
+    ge need to be use as a gated variable on neural group side. See: GatedNeuron in neuron_utils.py
+    """
+    @property
+    def namespace(self) -> dict:
         gmax = .01
 
         taupre = 20 * ms
@@ -34,6 +45,16 @@ class STDPSynapse(Synapse):
 
         dApost *= gmax
         dApre *= gmax
+
+        return {
+            'gmax': gmax,
+
+            'taupre': taupre,
+            'taupost': taupre,
+
+            'dApre': dApre,
+            'dApost': dApost,
+        }
 
     @property
     def on_pre(self):

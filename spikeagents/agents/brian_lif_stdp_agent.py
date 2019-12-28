@@ -1,23 +1,27 @@
 from spikeagents.brian.brian_agent import BrianAgent
 from spikeagents.brian.handlers.spike_event_handler import SpikeEventHandler
-from spikeagents.brian.neuron_utils import GatedNeuron
-from spikeagents.brian.synapse_utils import STDPSynapse
+from spikeagents.brian.neuron_utils import GatedNeuron, Neuron
+from spikeagents.brian.synapse_utils import STDPSynapse, Synapse
 from spikeagents.brian.utils import plot_states
 from brian2 import *
 
 
 class BrianLIFAgent(BrianAgent):
 
-    def __init__(self, neuron_model, synapse_model, input_size, output_size, namespace: dict = None):
+    def __init__(self, neuron_model: Neuron, synapse_model: Synapse, input_size, output_size, namespace: dict = None):
         BrianAgent.__init__(self, neuron_model=neuron_model, synapse_model=synapse_model, namespace=namespace)
         self.input_size = input_size
         self.output_size = output_size
 
     def _make_layers(self):
         self.inp = self.add_neuron_layer(N=self.input_size, model=self.neuron_model.model, method='linear',
-                                         threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
+                                         threshold=self.neuron_model.threshold,
+                                         reset=self.neuron_model.reset,
+                                         namespace=self.namespace)
         self.output = self.add_neuron_layer(N=self.output_size, model=self.neuron_model.model, method='linear',
-                                            threshold='v>v_threshold', reset='v = v_rest', namespace=self.namespace)
+                                            threshold=self.neuron_model.threshold,
+                                            reset=self.neuron_model.reset,
+                                            namespace=self.namespace)
 
     def _make_synapses(self):
         s = self.add_synapse_layer(source=self.inp, target=self.output,

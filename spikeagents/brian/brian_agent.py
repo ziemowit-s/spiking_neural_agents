@@ -3,12 +3,14 @@ import abc
 from spikeagents.brian.handlers.brian_event_handler import BrianEventHandler
 from brian2 import *
 
+from spikeagents.brian.neuron_utils import Neuron
+from spikeagents.brian.synapse_utils import Synapse
 from spikeagents.core.agent import Agent
 
 
 class BrianAgent(Agent, Network):
 
-    def __init__(self, neuron_model, synapse_model, namespace=None):
+    def __init__(self, neuron_model: Neuron, synapse_model: Synapse, namespace: dict = None):
         Agent.__init__(self)
         Network.__init__(self)
         self.spike_monitors = {}
@@ -56,12 +58,12 @@ class BrianAgent(Agent, Network):
         self._run_agent(duration, namespace=namespace)
         print('network init done')
 
-    def _run_agent(self, duration=10*ms, namespace=None):
+    def _run_agent(self, duration=10 * ms, namespace=None):
         if namespace is None:
             namespace = self.namespace
         self.run(duration, namespace=namespace)
 
-    def step(self, duration=1*ms, observation=None, reward=None, namespace=None):
+    def step(self, duration=1 * ms, observation=None, reward=None, namespace=None):
         if observation is not None:
             self.inp[:].v += observation
 

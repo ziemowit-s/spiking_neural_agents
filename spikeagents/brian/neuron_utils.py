@@ -7,6 +7,16 @@ class Neuron:
 
     @property
     @abc.abstractmethod
+    def threshold(self):
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def reset(self):
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
     def namespace(self) -> dict:
         raise NotImplementedError()
 
@@ -18,6 +28,14 @@ class Neuron:
 
 class LIFNeuron(Neuron):
     @property
+    def threshold(self):
+        return 'v>1'
+
+    @property
+    def reset(self):
+        return 'v = 0'
+
+    @property
     def namespace(self) -> dict:
         return {}
 
@@ -27,6 +45,14 @@ class LIFNeuron(Neuron):
 
 
 class LIFWithStochasticCurrentNeuron(Neuron):
+    @property
+    def threshold(self):
+        return 'v>1'
+
+    @property
+    def reset(self):
+        return 'v = 0'
+
     @property
     def namespace(self) -> dict:
         return {}
@@ -42,6 +68,15 @@ class GatedNeuron(Neuron):
 
     ge is a gated variable which is set on synapse side. See: STDPSynapse in synapse_utils.py
     """
+
+    @property
+    def threshold(self):
+        return 'v>v_threshold'
+
+    @property
+    def reset(self):
+        return 'v = v_rest'
+
     @property
     def namespace(self) -> dict:
         return {

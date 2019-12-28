@@ -49,5 +49,5 @@ python setup.py bdist_wheel
 
 * From GitHub
 ```bash
-pip install https://github.com/ziemowit-s/spiking_neural_agents
+pip install git+https://github.com/ziemowit-s/spiking_neural_agents.git
 ```
